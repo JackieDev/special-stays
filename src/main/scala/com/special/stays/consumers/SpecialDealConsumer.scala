@@ -1,6 +1,7 @@
 package com.special.stays.consumers
 
 import cats.effect.{ConcurrentEffect, ContextShift, Timer}
+import com.special.stays.database.Store
 import com.special.stays.models.SpecialDeal
 import fs2.kafka.vulcan._
 import vulcan.Codec
@@ -12,7 +13,7 @@ object SpecialDealConsumer {
 
   val topic = "special-deals"
 
-  def stream[F[_]: ConcurrentEffect: ContextShift: Timer](): fs2.Stream[F, Unit] = {
+  def stream[F[_]: ConcurrentEffect: ContextShift: Timer, G[_]](store: Store[F, G]): fs2.Stream[F, Unit] = {
 
     val avroSettings = AvroSettings[F](
       SchemaRegistryClientSettings[F]("http://0.0.0.0:8081")
@@ -31,7 +32,8 @@ object SpecialDealConsumer {
       .subscribeTo(topic)
       .records
       .map { committable =>
-        println(s"------------ Received the following from topic: $topic: ${committable.record}")
+        println(s"----- Received the following from topic: $topic: ${committable.record}, now saving to the database...")
+        store.insertSpecial(committable.record.value)
         committable.offset
       }
       .through(commitBatchWithin(50, 10.seconds))
