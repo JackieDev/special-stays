@@ -59,7 +59,7 @@ object Main extends IOApp {
       db <- Stream.resource(databaseResource(config))
       consumer = SpecialDealConsumer.stream[IO, ConnectionIO](db)
 
-      httpService = new Routes[IO]().routes
+      httpService = new Routes[IO, ConnectionIO](db).routes
 
       server <- runServer(httpService, config.specialStays.httpd.host, config.specialStays.httpd.port, appExecutionContext, consumer)
     } yield server

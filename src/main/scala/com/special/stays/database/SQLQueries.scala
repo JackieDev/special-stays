@@ -26,4 +26,9 @@ object SQLQueries {
          | ${specialDeal.availableFrom}, ${specialDeal.availableTo}, now())""".stripMargin
       .update
 
+  def getSpecials(): ConnectionIO[List[SpecialDeal]] =
+    sql"""
+         | select * from special_deals""".stripMargin
+      .query[SpecialDeal].to[List]
+
 }

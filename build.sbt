@@ -8,8 +8,12 @@ resolvers += "confluent" at "https://packages.confluent.io/maven/"
 
 val cats         = "2.4.2"
 val circe        = "0.13.0"
+val doobie       = "0.12.1"
+val flyway       = "7.7.2"
 val fs2Kafka     = "1.11.0"
 val http4s       = "0.21.20"
+val Http4sScalatags = "0.21.34"
+val postgresql   = "42.2.6"
 val pureConfig   = "0.14.1"
 val refined      = "0.9.13"
 val vulcan       = "1.6.0"
@@ -20,6 +24,11 @@ libraryDependencies ++= Seq(
   "io.circe"               %% "circe-generic"        % circe,
   "io.circe"               %% "circe-refined"        % circe,
   "io.circe"               %% "circe-parser"         % circe,
+  "org.tpolecat"           %% "doobie-core"          % doobie,
+  "org.tpolecat"           %% "doobie-hikari"        % doobie,
+  "org.tpolecat"           %% "doobie-postgres"      % doobie,
+  "org.tpolecat"           %% "doobie-refined"       % doobie,
+  "org.flywaydb"           %  "flyway-core"          % flyway,
   "com.github.fd4s"        %% "fs2-kafka"            % fs2Kafka,
   "com.github.fd4s"        %% "fs2-kafka-vulcan"     % vulcan,
   "com.github.fd4s"        %% "vulcan"               % vulcan,
@@ -27,5 +36,8 @@ libraryDependencies ++= Seq(
   "org.http4s"             %% "http4s-blaze-client"  % http4s,
   "org.http4s"             %% "http4s-circe"         % http4s,
   "org.http4s"             %% "http4s-dsl"           % http4s,
-  "com.github.pureconfig"  %% "pureconfig"           % pureConfig
+  "org.http4s"             %% "http4s-scalatags"     % Http4sScalatags,
+  "org.postgresql"         %  "postgresql"           % postgresql,
+  "com.github.pureconfig"  %% "pureconfig"           % pureConfig,
+  "com.typesafe.scala-logging" %% "scala-logging"    % "3.9.3"
 )

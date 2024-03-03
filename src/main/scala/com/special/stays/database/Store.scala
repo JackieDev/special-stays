@@ -17,6 +17,7 @@ trait Store[F[_], G[_]] {
   def liftK: F ~> G
   def commit[A](f: G[A]): F[A]
   def insertSpecial(specialDeal: SpecialDeal): F[DBResult]
+  def getAllSpecials(): F[List[SpecialDeal]]
 
 }
 
@@ -32,13 +33,20 @@ final class PostgresStore[F[_]: Sync](transactor: Transactor[F], val liftK: Func
       case Right(rows) => {
         rows match {
           case 1 =>
+            println(s"---------- inserting special into db was successful")
             SuccessfulDBInsert
           case _ =>
+            println(s"---------- inserting special into db was not successful")
             FailedDBInsert
         }
       }
-      case Left(_) => FailedDBInsert
+      case Left(e) =>
+        println(s"---------- inserting special into db was not successful, error: $e")
+        FailedDBInsert
     })
+
+  override def getAllSpecials(): F[List[SpecialDeal]] =
+    SQLQueries.getSpecials().transact(transactor)
 
 }
 

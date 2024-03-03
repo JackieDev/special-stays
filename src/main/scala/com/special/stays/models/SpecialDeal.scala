@@ -1,5 +1,6 @@
 package com.special.stays.models
 
+import cats.Show
 import cats.implicits._
 
 import java.time.{ZoneId, ZonedDateTime}
@@ -34,5 +35,7 @@ object SpecialDeal {
         f("availableTo", _.availableTo)
         ).mapN(SpecialDeal(_, _, _, _, _, _))
     }
+
+  implicit val showSpecial: Show[SpecialDeal] = Show.show(special => s"${special.id}, ${special.description}")
 
 }

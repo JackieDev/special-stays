@@ -1,5 +1,7 @@
+DROP TABLE special_deals;
+
 CREATE TABLE IF NOT EXISTS special_deals(
-  special_id INT NOT NULL,
+  special_id VARCHAR NOT NULL,
   description VARCHAR NOT NULL,
   total_nights INT,
   discount_percentage_off DECIMAL(3,2) NOT NULL,

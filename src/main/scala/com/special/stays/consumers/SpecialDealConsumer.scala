@@ -1,11 +1,13 @@
 package com.special.stays.consumers
 
-import cats.effect.{ConcurrentEffect, ContextShift, Timer}
+import cats.effect._
+import cats.syntax.all._
 import com.special.stays.database.Store
 import com.special.stays.models.SpecialDeal
 import fs2.kafka.vulcan._
 import vulcan.Codec
 import fs2.kafka.{AutoOffsetReset, ConsumerSettings, KafkaConsumer, RecordDeserializer, commitBatchWithin}
+import com.typesafe.scalalogging.Logger
 
 import scala.concurrent.duration.DurationInt
 
@@ -14,6 +16,8 @@ object SpecialDealConsumer {
   val topic = "special-deals"
 
   def stream[F[_]: ConcurrentEffect: ContextShift: Timer, G[_]](store: Store[F, G]): fs2.Stream[F, Unit] = {
+
+    val logger: Logger = Logger(getClass)
 
     val avroSettings = AvroSettings[F](
       SchemaRegistryClientSettings[F]("http://0.0.0.0:8081")
@@ -31,10 +35,9 @@ object SpecialDealConsumer {
       .stream(consumerSettings)
       .subscribeTo(topic)
       .records
-      .map { committable =>
-        println(s"----- Received the following from topic: $topic: ${committable.record}, now saving to the database...")
-        store.insertSpecial(committable.record.value)
-        committable.offset
+      .evalMap { cr =>
+        store.insertSpecial(cr.record.value)
+          .as(cr.offset)
       }
       .through(commitBatchWithin(50, 10.seconds))
 
