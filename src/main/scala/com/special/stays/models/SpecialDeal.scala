@@ -11,6 +11,8 @@ import vulcan.Codec._
 
 case class SpecialDeal(id: String,
                        description: String,
+                       hotelName: String,
+                       cityOfLocation: String,
                        totalNights: Option[Int], // only use if deal is for fixed number of nights such as Valentines and MayBankHoilday
                        discountPercentageOff: Double,
                        availableFrom: ZonedDateTime,
@@ -29,11 +31,13 @@ object SpecialDeal {
       (
         f("id", _.id),
         f("description", _.description),
+        f("hotelName", _.hotelName),
+        f("cityOfLocation", _.cityOfLocation),
         f("totalNights", _.totalNights),
         f("discountPercentageOff", _.discountPercentageOff),
         f("availableFrom", _.availableFrom),
         f("availableTo", _.availableTo)
-        ).mapN(SpecialDeal(_, _, _, _, _, _))
+        ).mapN(SpecialDeal(_, _, _, _, _, _, _, _))
     }
 
   implicit val showSpecial: Show[SpecialDeal] = Show.show(special => s"${special.id}, ${special.description}")

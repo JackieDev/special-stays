@@ -48,6 +48,8 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
           tr(
             td(special.id),
             td(special.description),
+            td(special.hotelName),
+            td(special.cityOfLocation),
             td(special.totalNights),
             td(special.discountPercentageOff),
             td(renderInstant(special.availableFrom.toInstant)),
@@ -62,7 +64,8 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
         div(
           cls := "container",
           h2(a(href := "/debug", cls := "link-secondary", "Welcome to Special Stays")),
-
+          input(cls := "search-input"),
+          button(cls := "search", value := "Search"),
           List(
             h4("Special Deals"),
             table(
@@ -71,6 +74,8 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
                 tr(
                   th("Id"),
                   th("Description"),
+                  th("Hotel Name"),
+                  th("City"),
                   th("Total Nights"),
                   th("Discount"),
                   th("From"),

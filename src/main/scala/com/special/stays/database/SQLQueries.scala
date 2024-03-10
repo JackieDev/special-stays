@@ -21,9 +21,9 @@ object SQLQueries {
 
   def insertSpecial(specialDeal: SpecialDeal): Update0 =
     sql"""
-         | insert into special_deals (special_id, description, total_nights, discount_percentage_off, available_from, available_to, added_on)
-         | values (${specialDeal.id}, ${specialDeal.description}, ${specialDeal.totalNights}, ${specialDeal.discountPercentageOff},
-         | ${specialDeal.availableFrom}, ${specialDeal.availableTo}, now())""".stripMargin
+         | insert into special_deals (special_id, description, hotel_name, city, total_nights, discount_percentage_off, available_from, available_to, added_on)
+         | values (${specialDeal.id}, ${specialDeal.description}, ${specialDeal.hotelName}, ${specialDeal.cityOfLocation}, ${specialDeal.totalNights},
+         | ${specialDeal.discountPercentageOff}, ${specialDeal.availableFrom}, ${specialDeal.availableTo}, now())""".stripMargin
       .update
 
   def getSpecials(): ConnectionIO[List[SpecialDeal]] =
