@@ -18,6 +18,7 @@ trait Store[F[_], G[_]] {
   def commit[A](f: G[A]): F[A]
   def insertSpecial(specialDeal: SpecialDeal): F[DBResult]
   def getAllSpecials(): F[List[SpecialDeal]]
+  def getAllSpecialsByCity(city: String): F[List[SpecialDeal]]
 
 }
 
@@ -47,6 +48,9 @@ final class PostgresStore[F[_]: Sync](transactor: Transactor[F], val liftK: Func
 
   override def getAllSpecials(): F[List[SpecialDeal]] =
     SQLQueries.getSpecials().transact(transactor)
+
+  override def getAllSpecialsByCity(city: String): F[List[SpecialDeal]] =
+    SQLQueries.getSpecialsInCity(city).transact(transactor)
 
 }
 

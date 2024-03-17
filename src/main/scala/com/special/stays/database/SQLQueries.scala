@@ -31,4 +31,9 @@ object SQLQueries {
          | select * from special_deals""".stripMargin
       .query[SpecialDeal].to[List]
 
+  def getSpecialsInCity(city: String): ConnectionIO[List[SpecialDeal]] =
+    sql"""
+         | select * from special_deals where city like $city""".stripMargin
+      .query[SpecialDeal].to[List]
+
 }

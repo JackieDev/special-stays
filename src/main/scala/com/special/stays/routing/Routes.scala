@@ -63,9 +63,11 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
       body(
         div(
           cls := "container",
-          h2(a(href := "/debug", cls := "link-secondary", "Welcome to Special Stays")),
-          input(cls := "search-input"),
-          button(cls := "search", value := "Search"),
+          h2("Welcome to Special Stays"),
+          form(cls := "search", method := "GET", action := "/search",
+            input(cls := "search-input", `type` := "text", name := "city")
+          ),
+          button(cls := "search", "Search"),
           List(
             h4("Special Deals"),
             table(
@@ -104,6 +106,12 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
         case GET -> Root / "special-deals" =>
           for {
             specials <- store.getAllSpecials()
+            page <- Ok(renderUI(specials))
+          } yield page
+
+        case GET -> Root / "search" / city =>
+          for {
+            specials <- store.getAllSpecialsByCity(city)
             page <- Ok(renderUI(specials))
           } yield page
 
