@@ -53,7 +53,8 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
             td(special.totalNights),
             td(special.discountPercentageOff),
             td(renderInstant(special.availableFrom.toInstant)),
-            td(renderInstant(special.availableTo.toInstant))
+            td(renderInstant(special.availableTo.toInstant)),
+            button(cls := "check-availability", "Check Availability")(special.id)
           )
         }
       }
