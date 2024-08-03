@@ -2,12 +2,13 @@ package com.special.stays.config
 
 import cats.effect.IO
 import com.typesafe.config.{Config, ConfigFactory}
-
 import pureconfig.generic.auto._
 
 final case class ServiceConfig(specialStays: SpecialStays)
 
-final case class SpecialStays(db: DatabaseConfig, httpd: HttpdConfig)
+final case class SpecialStays(db: DatabaseConfig,
+                              httpd: HttpdConfig,
+                              hyperionHotelBaseUrl: String)
 
 final case class DatabaseConfig(url: String,
                                 username: String,

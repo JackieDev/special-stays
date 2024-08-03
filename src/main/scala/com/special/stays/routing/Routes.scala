@@ -23,18 +23,6 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
 
   val logger = Logger(getClass)
 
-  def mkHead(title: String): TypedTag[String] = head(
-    tag("title")(title),
-    link(
-      href := "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css",
-      rel  := "stylesheet"
-    ),
-    link(
-      href        := "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css",
-      rel         := "stylesheet"
-    )
-  )
-
   private def renderInstant(x: Instant): Text.TypedTag[String] = span(
     cls := "text-nowrap",
     x.toString()
@@ -43,7 +31,7 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
   private def renderUI(specialDeals: List[SpecialDeal]): Text.TypedTag[String] = {
     val specialRows =
       NonEmptyList
-        .fromList(specialDeals).fold(NonEmptyList.one(tr(td(colspan := 6, em("No specials found."))))) { specialsNel =>
+        .fromList(specialDeals).fold(NonEmptyList.one(tr(td(colspan := 8, em("No specials found."))))) { specialsNel =>
         specialsNel.map { special =>
           tr(
             td(special.id),
@@ -54,13 +42,13 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
             td(special.discountPercentageOff),
             td(renderInstant(special.availableFrom.toInstant)),
             td(renderInstant(special.availableTo.toInstant)),
-            button(cls := "check-availability", "Check Availability")(special.id)
+            td(button(cls := "check-availability", value := special.id, "Check Availability"))
           )
         }
       }
 
     html(
-      mkHead("Special Hotel Deals"),
+      PageUtils.mkHead("Special Hotel Deals"),
       body(
         div(
           cls := "container",
@@ -82,7 +70,8 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
                   th("Total Nights"),
                   th("Discount"),
                   th("From"),
-                  th("Until")
+                  th("Until"),
+                  th("Book Deal")
                 )
               ),
               tbody(

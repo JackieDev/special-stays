@@ -2,14 +2,15 @@ package com.special.stays
 
 import cats.effect._
 import cats.syntax.all._
+import com.special.stays.clients.HyperionHotelClient
 import com.special.stays.config.ServiceConfig
 import com.special.stays.consumers.SpecialDealConsumer
 import com.special.stays.database.{PostgresStore, SchemaMigration, Store}
-import com.special.stays.routing.Routes
+import com.special.stays.routing.{CheckAvailabilityRoutes, Routes}
 import com.typesafe.scalalogging.Logger
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import org.http4s.HttpRoutes
+import org.http4s.{HttpRoutes, Uri}
 import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 
@@ -59,7 +60,12 @@ object Main extends IOApp {
       db <- Stream.resource(databaseResource(config))
       consumer = SpecialDealConsumer.stream[IO, ConnectionIO](db)
 
+      hyperionHotelClient <- Stream.resource(HyperionHotelClient.resource[IO](ec)(Uri.unsafeFromString(config.specialStays.hyperionHotelBaseUrl)))
+
+      checkAvailabilityRoutes = new CheckAvailabilityRoutes[IO](hyperionHotelClient).routes
+
       httpService = new Routes[IO, ConnectionIO](db).routes
+        .combineK(checkAvailabilityRoutes)
 
       server <- runServer(httpService, config.specialStays.httpd.host, config.specialStays.httpd.port, appExecutionContext, consumer)
     } yield server
