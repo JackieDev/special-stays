@@ -70,11 +70,8 @@ class CheckAvailabilityRoutes[F[_]: Sync](hyperionHotelClient: HyperionHotelClie
     HttpRoutes
       .of[F] {
         case GET -> Root / "check-availability" / specialDealId => {
-          println(s"-------------------check-availability was hit with $specialDealId ")
           val checkAvailability = CheckAvailability(specialDealId, now, now.plusDays(7)) //TODO come up with some kind of a date picker
           for {
-            hotelCheck <- hyperionHotelClient.checkHotel()
-            _ = println(s"----------------- hotelCheck: $hotelCheck")
             availability <- hyperionHotelClient.checkAvailability(checkAvailability)
             page <- Ok(renderUI(specialDealId, availability))
           } yield page

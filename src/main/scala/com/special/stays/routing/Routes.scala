@@ -37,7 +37,7 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
             td(special.id),
             td(special.description),
             td(special.hotelName),
-            td(special.cityOfLocation),
+            td(special.cityOfLocation.name),
             td(special.totalNights),
             td(special.discountPercentageOff),
             td(renderInstant(special.availableFrom.toInstant)),
@@ -102,6 +102,7 @@ class Routes[F[_]: Sync, G[_]](store: Store[F, G]) extends Http4sDsl[F] {
         case GET -> Root / "search" / city =>
           for {
             specials <- store.getAllSpecialsByCity(city)
+            _ = println(s"------------ specials by city: $specials")
             page <- Ok(renderUI(specials))
           } yield page
 

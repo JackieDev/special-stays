@@ -49,8 +49,12 @@ final class PostgresStore[F[_]: Sync](transactor: Transactor[F], val liftK: Func
   override def getAllSpecials(): F[List[SpecialDeal]] =
     SQLQueries.getSpecials().transact(transactor)
 
-  override def getAllSpecialsByCity(city: String): F[List[SpecialDeal]] =
-    SQLQueries.getSpecialsInCity(city).transact(transactor)
+  override def getAllSpecialsByCity(city: String): F[List[SpecialDeal]] = {
+    for {
+      specials <- SQLQueries.getSpecialsInCity(city).transact(transactor)
+      _ = logger.info(s"------ specials in city: $city: $specials")
+    } yield specials
+  }
 
 }
 

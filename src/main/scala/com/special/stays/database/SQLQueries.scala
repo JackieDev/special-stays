@@ -1,7 +1,7 @@
 package com.special.stays.database
 
 import cats.Show
-import com.special.stays.models.SpecialDeal
+import com.special.stays.models._
 import doobie._
 import doobie.implicits._
 import doobie.implicits.javasql.TimestampMeta
@@ -31,9 +31,11 @@ object SQLQueries {
          | select * from special_deals""".stripMargin
       .query[SpecialDeal].to[List]
 
-  def getSpecialsInCity(city: String): ConnectionIO[List[SpecialDeal]] =
+  def getSpecialsInCity(city: String): ConnectionIO[List[SpecialDeal]] = {
+    println(s"--------------------- city: $city")
     sql"""
-         | select * from special_deals where city like $city""".stripMargin
+       | select * from special_deals where city like '%$city%'""".stripMargin
       .query[SpecialDeal].to[List]
+  }
 
 }
